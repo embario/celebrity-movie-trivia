@@ -1,0 +1,8 @@
+flask
+flask-cors
+Flask-SQLAlchemy
+python-dotenv
+pysqlite3
+flake8
+requests
+ipdb

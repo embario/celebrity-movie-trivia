@@ -1,0 +1,15 @@
+version: '2.1'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/app
+    env_file: .env
+    logging:
+      driver: json-file
+      options:
+        max-size: 500k
+        max-file: "1"    

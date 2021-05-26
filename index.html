@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	    <!-- Bootstrap -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+			<!-- JQuery -->
+		<script src="./static/jquery.min.js"></script>
+
+		<!-- Select2 -->
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>		
+		<title>Celebrity Movie Trivia Game!</title>
+	</head>
+	<body>
+		<div class='container-fluid' style="background: lightgrey; padding:100px;">
+			{% for message in get_flashed_messages() %}
+				<div class="alert alert-primary flash">{{ message }}</div>
+			{% endfor %}			
+			<title>Welcome to the Celebrity Movie Trivia Game!</title>
+			<h1>Welcome to the Celebrity Movie Trivia Game!</h1>
+			<br/>
+
+			<h2>Test Your Knowledge</h2>
+			<select class='custom-select' id="movie-picker" style='width:300px;' name='movie'></select>
+			<form action='start_game' method='post'>
+				<input type='hidden' id='movie-id-input' name='movie_id'/>
+				<input type='submit' class='btn btn-primary' id='start-game-btn' name='Start Game'></input>
+			</form>
+		</div>
+	</body>
+	<script>
+		$(document).ready(function(){
+			$("#movie-picker").select2({
+				ajax: {
+					type: 'get',
+					delay: 250,
+				    url: "movie_search",
+				    placeholder: "Search for a Movie...",
+				    data: function (params) {
+				    	return params.term;
+				    },
+				    processResults: function(data) {
+				    	return {results: data.results};
+				    }
+				},
+			});
+
+			$("#movie-picker").on('select2:select', function(e){
+				var data = e.params.data;
+				$("#movie-id-input").val(data['id']);
+			});
+
+		});
+	</script>
+</html>
