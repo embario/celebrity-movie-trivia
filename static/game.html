@@ -8,7 +8,7 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
 		<!-- JQuery -->
-		<script src="./static/jquery.min.js"></script>
+		<script src="./static/js/jquery.min.js"></script>
 
 		<!-- Select2 -->
 		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -22,15 +22,16 @@
 			{% endfor %}			
 			<title>{{ movie.title }} Celebrity Trivia!</title>
 			<h2> Which of these actors were actually in the movie, {{ movie.title }}?</h2>
+			<p> Keep in mind that the number of correct answers is random!</p>
 
 			<form action='submit_game' method='post'>
 				<input type='hidden' name='movie_id' value='{{ movie.id }}'/>
 				<div class='row'>
 					{% for actor in options %}
 						<input type='hidden' name='{{ actor.name }}' value='{{ actor.id }}' />
-						<div class='col-sm'>
+						<div class='col-sm' style='text-align: center; margin: 20px;'>
 							<img src={{ actor.profile_pic or url_for('static', filename='img/default.png') }} style="width:200px; height:300px";/>
-							<div class='form-check'>
+							<div class='form-check' style="margin: auto; width:75%;">
 								<input type='checkbox' class='form-check-input' name={{actor.id}} id='flexCheckDefault'>
 								<label class='form-check-label' for='flexCheckDefault'>{{actor.name}}</label>
 							</div>
@@ -43,9 +44,4 @@
 			</form>
 		</div>
 	</body>
-
-	<script>
-		$(document).ready(function(){
-		});
-	</script>
 </html>

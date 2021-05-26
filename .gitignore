@@ -2,8 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+
 *.sqlite
 static/img/*.png
+static/img/*.jpg
 !default.png
 
 # C extensions

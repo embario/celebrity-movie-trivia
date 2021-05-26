@@ -8,8 +8,8 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 
-			<!-- JQuery -->
-		<script src="./static/jquery.min.js"></script>
+		<!-- JQuery -->
+		<script src="./static/js/jquery.min.js"></script>
 
 		<!-- Select2 -->
 		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -26,11 +26,14 @@
 			<br/>
 
 			<h2>Test Your Knowledge</h2>
-			<select class='custom-select' id="movie-picker" style='width:300px;' name='movie'></select>
-			<form action='start_game' method='post'>
-				<input type='hidden' id='movie-id-input' name='movie_id'/>
-				<input type='submit' class='btn btn-primary' id='start-game-btn' name='Start Game'></input>
-			</form>
+			<div class='col-sm'>
+				<select class='custom-select' id="movie-picker" style='width:300px;' name='movie'></select>
+				<form action='start_game' method='post' style='display:inline-block;'>
+					<input type='hidden' id='movie-id-input' name='movie_id'/>
+					<input type='submit' class='btn btn-primary' id='start-game-btn' name='Start Game'></input>
+				</form>
+				<a class='btn btn-secondary' href='{{ url_for('score') }}'> Score </a>				
+			</div>
 		</div>
 	</body>
 	<script>

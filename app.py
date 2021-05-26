@@ -8,7 +8,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
 from utils import get_or_create, TMDB_URLS, GAME_NUM_OPTIONS, make_tmdb_request, get_wrong_actors, score_game
-from models import db, Movie, MoviePerson
+from models import db, Movie, MoviePerson, TriviaScore
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level='INFO')
@@ -46,13 +46,18 @@ def submit_game():
     movie = Movie.query.filter_by(id=form_data.pop('movie_id')).first()
     actor_ids = [v for k, v in form_data.items() if not k.isdigit()]
     user_input = [k for k, v in form_data.items() if k.isdigit()]    
-    score, right_choices, all_choices = score_game(movie, user_input, actor_ids)
+    score, right_choices, wrong_choices, all_choices, correct_answers = score_game(movie, user_input, actor_ids)
+    db.session.add(score)
+    db.session.commit()
+
     return render_template(
-        'score.html', 
+        'static/results.html', 
         score=score, 
         movie=movie, 
         right_choices=right_choices,
+        wrong_choices=wrong_choices,
         all_choices=all_choices,
+        correct_answers=correct_answers,
     )
 
 
@@ -60,6 +65,8 @@ def submit_game():
 def start_game():
     num_correct = random.randint(1, GAME_NUM_OPTIONS)
     num_wrong = GAME_NUM_OPTIONS - num_correct
+    logger.info(num_correct)
+    logger.info(num_wrong)
 
     if request.method == "GET":
         movie_id = request.query_string.decode('utf-8').replace("movie_id=", "")
@@ -92,19 +99,23 @@ def start_game():
     random.shuffle(options)
 
     for option in options:
-        if option.profile_path_ext is not None:
+        if option.profile_pic is None and option.profile_path_ext is not None:
             resp = make_tmdb_request(TMDB_URLS['get_profile_pic'], option.profile_path_ext)
             with open(f"./static/img{option.profile_path_ext}", 'wb') as f:
                 f.write(resp.content)
                 option.profile_pic = f.name
 
     db.session.commit()
-    return render_template("game.html", options=options, movie=movie)
+    return render_template("static/game.html", options=options, movie=movie)
 
+@app.route("/score")
+def score():
+    scores = TriviaScore.query.all()
+    return render_template('static/scores.html', scores=scores)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('static/index.html')
 
 
 if __name__ == '__main__':

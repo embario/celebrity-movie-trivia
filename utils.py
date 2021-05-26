@@ -31,7 +31,7 @@ def make_tmdb_request(url, data):
         raise ValueError(f"Unrecognized HTTP Requests (URL '{url}')")
 
     try:
-        logger.info(f"Querying '{url}'...")
+        logger.debug(f"Querying '{url}'...")
         resp = requests.get(url, params={'api_key': API_KEY, 'language': 'en-US'})
         assert resp.status_code == 200
     except AssertionError:
@@ -106,6 +106,7 @@ def score_game(movie, user_input, actor_ids):
     Given a dictionary containing the checks made on MoviePerson IDs, determine the score for the user.
     """
     right_choices = []
+    wrong_choices = []
     all_choices = MoviePerson.query.filter(MoviePerson.id.in_(actor_ids)).all()
     user_input = MoviePerson.query.filter(MoviePerson.id.in_(user_input)).all()
     correct_answers = [mp for mp in all_choices if mp in movie.cast]
@@ -113,6 +114,8 @@ def score_game(movie, user_input, actor_ids):
     for mp in user_input:
         if mp in correct_answers:
             right_choices.append(mp)
+        else:
+        	wrong_choices.append(mp)
 
-    score = TriviaScore(num_correct=len(right_choices), num_answers=len(correct_answers))
-    return score, right_choices, all_choices
+    score = TriviaScore(num_correct=len(right_choices), num_incorrect=len(wrong_choices), num_answers=len(correct_answers))
+    return score, right_choices, wrong_choices, all_choices, correct_answers

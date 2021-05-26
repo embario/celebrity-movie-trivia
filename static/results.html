@@ -8,7 +8,7 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
 		<!-- JQuery -->
-		<script src="./static/jquery.min.js"></script>
+		<script src="./static/js/jquery.min.js"></script>
 
 		<!-- Select2 -->
 		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -17,28 +17,36 @@
 	</head>
 	<body>
 		<div class='container-fluid' style="background: lightgrey; padding:100px;">
-			<h2> Results are In!</h2>
-			<h3> Out of {{ score.num_answers }}, you got {{ score.num_correct }} correct! </h3>
+			<title>Celebrity Trivia: {{ movie.title }}</title>
+			<h2> Results are In:</h2>
+			<h3> You got {{ score.num_correct }} / {{ score.num_answers }} correct and {{ score.num_incorrect }} incorrect! </h3>
 
 			<div class='row'>
 				{% for actor in all_choices %}
-					<div class='col-sm'>
+					<div class='col-sm' style='text-align: center; margin: 20px;'>
 						<img src={{ actor.profile_pic or url_for('static', filename='img/default.png') }} style="width:200px; height:300px";/>
 						<div class='form-check'>
 							<label class='form-check-label' for='flexCheckDefault'>{{actor.name}}</label>
 							{% if actor in right_choices %}
-								<label> CORRECT </label>
+								<br/>
+								<label style="color: green;"> CORRECT </label>
+							{% elif actor in wrong_choices %}
+								<br/>
+								<label style="color: red;"> INCORRECT </label>
+							{% elif actor in correct_answers %}
+								<br/>
+								<label style="color: blue;"> ALSO CORRECT </label>
 							{% endif %}
 						</div>
 					</div>
 				{% endfor %}
 			</div>
-			<div class='row'>
-				<form action='start_game' method='post'>
+			<div class='row' style='width:300px; display:block; margin: 20px auto;'>
+				<form action='start_game' method='post' style='padding:0;'>
 					<input type='hidden' id='movie-id-input' name='movie_id' value='{{ movie.id }}'/>
-					<input type='submit' class='btn btn-primary' id='start-game-btn' value='Play Again'/>
+					<input type='submit' class='btn btn-primary' id='start-game-btn' value='Play Again' style='width:300px;'/>
 				</form>
-				<a class='btn btn-secondary' href={{ url_for('index') }}> Home </a>				
+				<a class='btn btn-secondary' href={{ url_for('index') }} style='margin-top:10px;'> Home </a>				
 			</div>
 
 		</div>

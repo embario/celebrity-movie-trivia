@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -31,5 +32,7 @@ class MoviePerson(db.Model):
 
 class TriviaScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
     num_correct = db.Column(db.Integer, nullable=False)
+    num_incorrect = db.Column(db.Integer, nullable=False)
     num_answers = db.Column(db.Integer, nullable=False)
