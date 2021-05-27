@@ -7,7 +7,7 @@ from flask import Flask, request, render_template, send_file, redirect, url_for,
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
-from utils import get_or_create, TMDB_URLS, GAME_NUM_OPTIONS, make_tmdb_request, get_wrong_actors, score_game
+from utils import get_or_create, TMDB_URLS, GAME_NUM_OPTIONS, GAME_NUM_CORRECT_OPTIONS, make_tmdb_request, get_wrong_actors, score_game
 from models import db, Movie, MoviePerson, TriviaScore
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ def search_movies():
     else:
         return {}
 
-    results = [{'id': d['id'], 'text': d['title']} for d in data]
+    results = [{'id': d['id'], 'text': f"{d['title']} ({d['release_date'].split('-')[0]})"} for d in data]
     logger.info(results)
     return {'results': results}
 
@@ -50,6 +50,14 @@ def submit_game():
     db.session.add(score)
     db.session.commit()
 
+    # Now add in Character names to help remember people!
+    data = make_tmdb_request(TMDB_URLS['get_cast_by_movie'], movie.id).json()['cast']
+    for choice in all_choices:
+        try:
+            choice.character = next(x['character'] for x in data if choice.id == x['id'])
+        except:
+            continue
+
     return render_template(
         'static/results.html', 
         score=score, 
@@ -63,19 +71,28 @@ def submit_game():
 
 @app.route("/start_game", methods=['GET', 'POST'])
 def start_game():
-    num_correct = random.randint(1, GAME_NUM_OPTIONS)
+    logger.info(f"NUM CORRECT: {GAME_NUM_CORRECT_OPTIONS}")
+
+    if GAME_NUM_CORRECT_OPTIONS:
+        num_correct = int(GAME_NUM_CORRECT_OPTIONS)
+    else:
+        num_correct = random.randint(1, GAME_NUM_OPTIONS)
+
     num_wrong = GAME_NUM_OPTIONS - num_correct
-    logger.info(num_correct)
-    logger.info(num_wrong)
 
     if request.method == "GET":
         movie_id = request.query_string.decode('utf-8').replace("movie_id=", "")
     else:
         movie_id = request.form['movie_id']
 
+    if not movie_id:
+        flash("Nothing was submitted.")
+        return render_template("static/index.html")
+
     # Get Movie for details.
     data = make_tmdb_request(TMDB_URLS['get_movie_by_id'], movie_id).json()
     movie, _ = get_or_create(Movie, id=data['id'], title=data['title'])
+    logger.info(f"Generating Correct ({num_correct}) / Incorrect ({num_wrong}) Options for {movie.title}...")
 
     # Grab Correct Movie Actors here.
     data = make_tmdb_request(TMDB_URLS['get_cast_by_movie'], movie_id).json()

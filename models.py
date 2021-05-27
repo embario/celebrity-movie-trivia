@@ -13,7 +13,7 @@ movie_and_cast = db.Table(
 
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, unique=True, nullable=False)
+    title = db.Column(db.String, nullable=False)
     cast = db.relationship("MoviePerson", secondary=movie_and_cast, lazy='subquery', backref=db.backref('movies', lazy=True))
 
     def __repr__(self):
@@ -25,6 +25,7 @@ class MoviePerson(db.Model):
     name = db.Column(db.String, nullable=False)
     profile_path_ext = db.Column(db.String, nullable=True)
     profile_pic = db.Column(db.String, nullable=True)
+    character = db.Column(db.String, nullable=True)
 
     def __repr__(self):
         return f"<MoviePerson {self.id} - {self.name}>"

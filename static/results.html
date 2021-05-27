@@ -1,54 +1,40 @@
-<!doctype html>
-<html>
-	<head>
-	    <meta charset="utf-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "static/base.html" %}
+{% block title %}{{ movie.title }} Celebrity Trivia Results!{% endblock %}
+{% block content %}
+<h2> Results are In:</h2>
+<h3> You got {{ score.num_correct }} / {{ score.num_answers }} correct! </h3>
 
-	    <!-- Bootstrap -->
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-
-		<!-- JQuery -->
-		<script src="./static/js/jquery.min.js"></script>
-
-		<!-- Select2 -->
-		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>	
-		<title>{{ movie.title }} Celebrity Trivia Results!</title>
-	</head>
-	<body>
-		<div class='container-fluid' style="background: lightgrey; padding:100px;">
-			<title>Celebrity Trivia: {{ movie.title }}</title>
-			<h2> Results are In:</h2>
-			<h3> You got {{ score.num_correct }} / {{ score.num_answers }} correct and {{ score.num_incorrect }} incorrect! </h3>
-
-			<div class='row'>
-				{% for actor in all_choices %}
-					<div class='col-sm' style='text-align: center; margin: 20px;'>
-						<img src={{ actor.profile_pic or url_for('static', filename='img/default.png') }} style="width:200px; height:300px";/>
-						<div class='form-check'>
-							<label class='form-check-label' for='flexCheckDefault'>{{actor.name}}</label>
-							{% if actor in right_choices %}
-								<br/>
-								<label style="color: green;"> CORRECT </label>
-							{% elif actor in wrong_choices %}
-								<br/>
-								<label style="color: red;"> INCORRECT </label>
-							{% elif actor in correct_answers %}
-								<br/>
-								<label style="color: blue;"> ALSO CORRECT </label>
-							{% endif %}
-						</div>
-					</div>
-				{% endfor %}
+<div class='row'>
+	{% for actor in all_choices %}
+		<div class='col-sm' style='text-align: center; margin: 20px;'>
+			<img src={{ actor.profile_pic or url_for('static', filename='img/default.png') }} style="width:200px; height:300px";/>
+			<div class='form-check'>
+				<label class='form-check-label' for='flexCheckDefault'>{{actor.name}}</label>
+				{% if actor.character %}
+					<br/>
+					<label class='form-check-label' style='font-weight: bold;'>{{actor.character}}</label>
+				{% endif %}
+				
+				{% if actor in right_choices %}
+					<br/>
+					<label style="color: green;"> CORRECT </label>
+				{% elif actor in wrong_choices %}
+					<br/>
+					<label style="color: red;"> INCORRECT </label>
+				{% elif actor in correct_answers %}
+					<br/>
+					<label style="color: blue;"> ALSO CORRECT </label>
+				{% endif %}
 			</div>
-			<div class='row' style='width:300px; display:block; margin: 20px auto;'>
-				<form action='start_game' method='post' style='padding:0;'>
-					<input type='hidden' id='movie-id-input' name='movie_id' value='{{ movie.id }}'/>
-					<input type='submit' class='btn btn-primary' id='start-game-btn' value='Play Again' style='width:300px;'/>
-				</form>
-				<a class='btn btn-secondary' href={{ url_for('index') }} style='margin-top:10px;'> Home </a>				
-			</div>
-
 		</div>
-	</body>
-</html>
+	{% endfor %}
+</div>
+<div class='row' style='width:300px; display:block; margin: 20px auto;'>
+	<form action='start_game' method='post' style='padding:0;'>
+		<input type='hidden' id='movie-id-input' name='movie_id' value='{{ movie.id }}'/>
+		<input type='submit' class='btn btn-primary' id='start-game-btn' value='Play Again' style='width:300px;'/>
+	</form>
+	<a class='btn btn-secondary' href={{ url_for('index') }} style='margin-top:10px;'> Home </a>				
+</div>
+{% endblock %}
+

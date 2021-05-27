@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 API_KEY = os.getenv("TMDB_API_KEY")
 GAME_NUM_OPTIONS = int(os.getenv("GAME_NUM_OPTIONS", 5))
+GAME_NUM_CORRECT_OPTIONS = os.getenv("GAME_NUM_CORRECT_OPTIONS")
 TMDB_API_URL = "https://api.themoviedb.org/3"
 TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 TMDB_URLS = {
