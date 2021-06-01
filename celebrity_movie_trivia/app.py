@@ -1,12 +1,7 @@
-import os
 import logging
-import requests
 import random
-import ipdb
-from flask import Flask, request, render_template, send_file, redirect, url_for, flash, Response
+from flask import Flask, request, render_template, flash
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.declarative import declarative_base
 from utils import get_or_create, TMDB_URLS, GAME_NUM_OPTIONS, GAME_NUM_CORRECT_OPTIONS, make_tmdb_request, get_wrong_actors, score_game
 from models import db, Movie, MoviePerson, TriviaScore
 
@@ -45,7 +40,7 @@ def submit_game():
     form_data.pop('Submit')
     movie = Movie.query.filter_by(id=form_data.pop('movie_id')).first()
     actor_ids = [v for k, v in form_data.items() if not k.isdigit()]
-    user_input = [k for k, v in form_data.items() if k.isdigit()]    
+    user_input = [k for k, v in form_data.items() if k.isdigit()]
     score, right_choices, wrong_choices, all_choices, correct_answers = score_game(movie, user_input, actor_ids)
     db.session.add(score)
     db.session.commit()
@@ -59,9 +54,9 @@ def submit_game():
             continue
 
     return render_template(
-        'results.html', 
-        score=score, 
-        movie=movie, 
+        'results.html',
+        score=score,
+        movie=movie,
         right_choices=right_choices,
         wrong_choices=wrong_choices,
         all_choices=all_choices,
@@ -71,8 +66,7 @@ def submit_game():
 
 @app.route("/start_game", methods=['GET', 'POST'])
 def start_game():
-    logger.info(f"NUM CORRECT: {GAME_NUM_CORRECT_OPTIONS}")
-
+    # If # correct options wasn't set, make it random.
     if GAME_NUM_CORRECT_OPTIONS:
         num_correct = int(GAME_NUM_CORRECT_OPTIONS)
     else:
@@ -98,7 +92,7 @@ def start_game():
     data = make_tmdb_request(TMDB_URLS['get_cast_by_movie'], movie_id).json()
     for mp_data in data['cast']:
         mp, _ = get_or_create(
-            MoviePerson, 
+            MoviePerson,
             id=mp_data['id'],
             name=mp_data['name'],
             profile_path_ext=mp_data['profile_path'],
@@ -125,14 +119,23 @@ def start_game():
     db.session.commit()
     return render_template("game.html", options=options, movie=movie)
 
+
 @app.route("/score")
 def score():
     scores = TriviaScore.query.all()
     return render_template('scores.html', scores=scores)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+# TODO: Register POST for registering Users.
+
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 
 if __name__ == '__main__':

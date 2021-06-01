@@ -12,6 +12,9 @@
 		<!-- JQuery -->
 		<script src="./static/js/jquery.min.js"></script>
 
+		<!-- CSS -->
+		<link rel="stylesheet" href="./static/css/styles.css">
+
 		<!-- Select2 -->
 		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -19,7 +22,16 @@
 		<title>{% block title %}{% endblock %}</title>
 	</head>
 	<body>
-		<div class='container' style="background: lightblue; padding:5%; margin:2% auto; max-width: 90%;">
+		<div id='main-header' class='container'>
+			{% if session['user'] %}
+				<h3> Welcome {{ session['user'].name }}!</h3>
+			{% else %}
+				<p> Welcome Guest!</p>
+				<!-- Undoc when sessions are ready to go. -->
+				<!-- Sign in or <a class='link', href={{ url_for('register') }}>up</a> to show off your trivia skillz.</p> -->
+			{% endif %}		
+		</div>
+		<div id='main-body' class='container'>
 			{% with messages = get_flashed_messages() %}
 			  {% if messages %}
 			    <ul class="alert alert-primary" role="alert">

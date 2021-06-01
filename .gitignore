@@ -5,8 +5,8 @@ __pycache__/
 
 
 *.sqlite
-static/img/*.png
-static/img/*.jpg
+celebrity_movie_trivia/static/img/*.png
+celebrity_movie_trivia/static/img/*.jpg
 !default.png
 
 # C extensions

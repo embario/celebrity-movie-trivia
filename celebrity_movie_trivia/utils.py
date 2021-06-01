@@ -2,11 +2,9 @@ import os
 import logging
 import requests
 import random
-import ipdb
 from models import db, Movie, MoviePerson, TriviaScore
 
 logger = logging.getLogger(__name__)
-
 API_KEY = os.getenv("TMDB_API_KEY")
 GAME_NUM_OPTIONS = int(os.getenv("GAME_NUM_OPTIONS", 5))
 GAME_NUM_CORRECT_OPTIONS = os.getenv("GAME_NUM_CORRECT_OPTIONS")
@@ -106,17 +104,17 @@ def score_game(movie, user_input, actor_ids):
     """ 
     Given a dictionary containing the checks made on MoviePerson IDs, determine the score for the user.
     """
-    right_choices = []
-    wrong_choices = []
+    user_right_choices = []
+    user_wrong_choices = []
     all_choices = MoviePerson.query.filter(MoviePerson.id.in_(actor_ids)).all()
     user_input = MoviePerson.query.filter(MoviePerson.id.in_(user_input)).all()
     correct_answers = [mp for mp in all_choices if mp in movie.cast]
 
     for mp in user_input:
         if mp in correct_answers:
-            right_choices.append(mp)
+            user_right_choices.append(mp)
         else:
-        	wrong_choices.append(mp)
+            user_wrong_choices.append(mp)
 
-    score = TriviaScore(num_correct=len(right_choices), num_incorrect=len(wrong_choices), num_answers=len(correct_answers))
-    return score, right_choices, wrong_choices, all_choices, correct_answers
+    score = TriviaScore(num_correct=len(user_right_choices), num_incorrect=len(user_wrong_choices), num_answers=len(correct_answers))
+    return score, user_right_choices, user_wrong_choices, all_choices, correct_answers

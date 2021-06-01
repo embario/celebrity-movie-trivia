@@ -1,0 +1,13 @@
+#main-body {
+	background: lightblue; 
+	padding:5%; 
+	margin:2% auto; 
+	max-width: 90%;
+}
+
+#main-header {
+	background: lightsalmon; 
+	padding:10px; 
+	margin:2% auto; 
+	max-width: 90%;
+}

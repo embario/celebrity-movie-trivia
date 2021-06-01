@@ -5,12 +5,23 @@
 <h2>Sign up here.</h2>
 
 <div class='col-sm' style='margin-top:20px;'>
-	<select class='custom-select' id="movie-picker" style='width:300px;' name='movie'></select>
-	<form action='start_game' method='post' style='display:inline-block;'>
-		<input type='hidden' id='movie-id-input' name='movie_id'/>
-		<input type='submit' class='btn btn-primary' id='start-game-btn' name='Start Game'></input>
+	<form action='register' method='post' style='display:inline-block;'>
+		<div class='form-group' style='margin-top:10px;'>
+			<label for='email'>Email</label>
+			<input type='email' class='form-control' id='email' arai-describedby='emailHelp' placeholder='Enter Email'></input>
+			<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+		</div>
+		<div class='form-group' style='margin-top:10px;'>
+		    <label for="password">Password</label>
+		    <input type="password" class="form-control" id="password" placeholder="Password">
+	  	</div>
+
+		<div class='form-group' style='margin-top:20px;'>
+			<button type="submit" class="btn btn-primary">Submit</button>
+			<a class='btn btn-secondary' href='{{ url_for('index') }}'> Home </a>					  	
+	  	</div>	  	
+		
 	</form>
-	<a class='btn btn-secondary' href='{{ url_for('score') }}'> Score </a>				
 </div>
 
 {% endblock %}
