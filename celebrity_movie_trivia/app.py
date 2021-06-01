@@ -15,7 +15,7 @@ logging.basicConfig(level='INFO')
 
 
 # Set up Flask Server.
-app = Flask(__name__, static_url_path='/static', static_folder='static', template_folder='.')
+app = Flask(__name__, static_url_path='/static', static_folder='static', template_folder='templates')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///celebrity-movie-trivia.sqlite'
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 CORS(app)  # Enables CORS everywhere
@@ -33,7 +33,7 @@ def search_movies():
     else:
         return {}
 
-    results = [{'id': d['id'], 'text': f"{d['title']} ({d['release_date'].split('-')[0]})"} for d in data]
+    results = [{'id': d['id'], 'text': f"{d['title']} ({d.get('release_date', 'N/A').split('-')[0]})"} for d in data]
     logger.info(results)
     return {'results': results}
 
@@ -59,7 +59,7 @@ def submit_game():
             continue
 
     return render_template(
-        'static/results.html', 
+        'results.html', 
         score=score, 
         movie=movie, 
         right_choices=right_choices,
@@ -87,7 +87,7 @@ def start_game():
 
     if not movie_id:
         flash("Nothing was submitted.")
-        return render_template("static/index.html")
+        return render_template("index.html")
 
     # Get Movie for details.
     data = make_tmdb_request(TMDB_URLS['get_movie_by_id'], movie_id).json()
@@ -123,16 +123,16 @@ def start_game():
                 option.profile_pic = f.name
 
     db.session.commit()
-    return render_template("static/game.html", options=options, movie=movie)
+    return render_template("game.html", options=options, movie=movie)
 
 @app.route("/score")
 def score():
     scores = TriviaScore.query.all()
-    return render_template('static/scores.html', scores=scores)
+    return render_template('scores.html', scores=scores)
 
 @app.route('/')
 def index():
-    return render_template('static/index.html')
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

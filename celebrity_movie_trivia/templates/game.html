@@ -1,10 +1,9 @@
-{% extends "static/base.html" %}
+{% extends "base.html" %}
 {% block title %} {{ movie.title }} Celebrity Trivia! {% endblock %}
 {% block content %}
 <h2>{{ movie.title }} Celebrity Trivia!</h1>
 
 <h2> Which of these actors were actually in the movie, {{ movie.title }}?</h2>
-<p> Keep in mind that the number of correct answers is random!</p>
 
 <form action='submit_game' method='post'>
 	<input type='hidden' name='movie_id' value='{{ movie.id }}'/>

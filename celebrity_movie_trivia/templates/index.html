@@ -1,12 +1,24 @@
-{% extends "static/base.html" %}
+{% extends "base.html" %}
 {% block title %}Celebrity Movie Trivia Game!{% endblock %}
+
+<div class='container' style="background: lightsalmon; padding:10px; margin:2% auto; max-width: 90%;">
+	{% if session['user'] %}
+		<h3> Welcome {{ session['user'].name }}!</h3>
+	{% else %}
+		<p> Welcome Guest. Sign in or <a class='link', href={{ url_for('register') }}>up</a> to show off your trivia skillz.</p>
+	{% endif %}
+</div>
+
 {% block content %}
+
 <h1>Welcome to the Celebrity Movie Trivia Game!</h1>
 <img src={{ url_for('static', filename='img/trivia.jpg') }} style="width:400px; height:200px; padding:20px 0px;";/>
-<h2>Test Your Knowledge!</h2>
+<p>Test Your knowledge by choosing a movie from the search box and guessing which actors have appeared in that movie.</h2>
 
 <div class='col-sm' style='margin-top:20px;'>
-	<select class='custom-select' id="movie-picker" style='width:300px;' name='movie'></select>
+	<select data-placeholder="Search for a Movie..." id="movie-picker" style='width:300px;' name='movie'>
+		<option></option>
+	</select>
 	<form action='start_game' method='post' style='display:inline-block;'>
 		<input type='hidden' id='movie-id-input' name='movie_id'/>
 		<input type='submit' class='btn btn-primary' id='start-game-btn' name='Start Game'></input>
@@ -23,7 +35,6 @@
 				type: 'get',
 				delay: 250,
 			    url: "movie_search",
-			    placeholder: "Search for a Movie...",
 			    data: function (params) {
 			    	return params.term;
 			    },
